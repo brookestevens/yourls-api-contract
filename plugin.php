@@ -11,6 +11,22 @@ Author URI: https://github.com/brookestevens
 // Define custom action "delete"
 yourls_add_filter( 'api_action_contract', 'contract_url' );
 
+function get_long_url_stats($results){
+	$i = 1;
+	$links = [];
+	foreach ( (array)$results as $res ) {
+		$links['links']['link_'.$i++] = [
+			'shorturl' => YOURLS_SITE .'/'. $res->keyword,
+			'url'      => $res->url,
+			'title'    => $res->title,
+			'timestamp'=> $res->timestamp,
+			'ip'       => $res->ip,
+			'clicks'   => $res->clicks,
+		];
+	}
+	return $links['links'];
+}
+
 function contract_url() {
 	// Need 'url' parameter
 	if( !isset( $_REQUEST['url'] ) ) {
@@ -33,7 +49,7 @@ function contract_url() {
 
 	global $ydb;
     $table = YOURLS_DB_TABLE_URL;
-    $url_exists = $ydb->fetchObject("SELECT * FROM `$table` WHERE `url` = :url", array('url'=>$url));
+    $url_exists = $ydb->fetchObjects("SELECT * FROM `$table` WHERE `url` = :url", array('url'=>$url));
     if ($url_exists === false) {
         $url_exists = NULL;
 	}
@@ -48,16 +64,15 @@ function contract_url() {
 	}
 	else{
 		// the URL has been shortened already
-		$keywords = yourls_get_longurl_keywords($url);
-		foreach($keywords as &$i){
-			$i = YOURLS_SITE . '/' . $i; 
-		}
+		// $keywords = yourls_get_longurl_keywords($url);
+		$links = get_long_url_stats($url_exists);
+
 		return array(
 			'statusCode' => 200, // HTTP-like status code
 			'simple'     => "This URL has been shortened",
 			'message'    => 'success',
 			'url_exists' => true,
-			'shorturl' => $keywords
+			'links' => $links
 		);
 	}
 
