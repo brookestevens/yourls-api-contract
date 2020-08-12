@@ -43,9 +43,7 @@ function contract_url() {
 			'statusCode' => 200, // HTTP-like status code
 			'simple'     => "This URL has not been shortened",
 			'message'    => 'success',
-			'your_action' => array( 
-				'shortened' => false
-			),
+			'url_exists' => false
 		);
 	}
 	else{
@@ -58,10 +56,8 @@ function contract_url() {
 			'statusCode' => 200, // HTTP-like status code
 			'simple'     => "This URL has been shortened",
 			'message'    => 'success',
-			'your_action' => array( 
-				'shortened' => true,
-				'shorturl' => $keywords
-			),
+			'url_exists' => true,
+			'shorturl' => $keywords
 		);
 	}
 
