@@ -50,7 +50,7 @@ function contract_url() {
 		// the URL has been shortened already
 		$keywords = yourls_get_longurl_keywords($url);
 		foreach($keywords as &$i){
-			$i = YOURLS_SITE . $i; 
+			$i = YOURLS_SITE . '/' . $i; 
 		}
 		return array(
 			'statusCode' => 200, // HTTP-like status code
